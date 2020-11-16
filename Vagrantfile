@@ -1,6 +1,7 @@
 IP_SERVER = "192.168.99.20"
 IP_WORKER = "192.168.99.3"
-VM_NETWORK = "vboxnet2"
+NUM_WORKERS=1
+VM_NETWORK = "vboxnet1"
 
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/bionic64"
@@ -21,7 +22,7 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  (1..3).each do |i|
+  (1..NUM_WORKERS).each do |i|
     config.vm.define "worker#{i}" do |node|
       node.vm.hostname = "worker#{i}"
       node.vm.network "private_network", ip: "#{IP_WORKER}#{i}", virtualbox__hostnet: VM_NETWORK, adapter: 2
