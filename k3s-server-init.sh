@@ -10,6 +10,7 @@ cat >> /etc/k3s/server.conf <<EOF
 NODE_IP=$NODE_IP
 NODE_EXTERNAL_IP=$NODE_IP
 NODE_NAME=$NODE_NAME
+INSTALL_K3S_EXEC="--disable traefik"
 EOF
 systemctl enable k3s-server
 systemctl start k3s-server

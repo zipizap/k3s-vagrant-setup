@@ -2,4 +2,4 @@
 
 vagrant destroy -f
 rm -f ./id_rsa*
-rm -f ./k3s
+#rm -f ./k3s

@@ -10,7 +10,8 @@ ExecStart=/usr/local/bin/k3s \
   --node-ip ${NODE_IP} \
   --node-external-ip ${NODE_EXTERNAL_IP} \
   --node-name ${NODE_NAME} \
-  --token-file /etc/k3s/token
+  --token-file /etc/k3s/token \
+  ${INSTALL_K3S_EXEC:-}
 Restart=on-failure
 RestartSec=5
 
