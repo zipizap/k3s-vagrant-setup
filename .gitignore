@@ -5,3 +5,4 @@ k3s
 k3s.yaml
 *.log
 token
+istio-1.7.4
