@@ -6,3 +6,4 @@ k3s.yaml
 *.log
 token
 istio-1.7.4
+istioctl
