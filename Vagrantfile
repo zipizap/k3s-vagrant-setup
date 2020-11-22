@@ -8,7 +8,7 @@ Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/bionic64"
   config.vm.provider "virtualbox" do |vb|
     vb.linked_clone = true
-    vb.cpus = 1
+    vb.cpus = 4
     #vb.memory = "2048"
     vb.memory = "8048"
   end
