@@ -12,6 +12,7 @@ set -o errexit
 set -o pipefail
 set -o nounset
 set -o xtrace
+export PS4='\[\e[44m\]\[\e[1;30m\](${BASH_SOURCE}:${LINENO}):${FUNCNAME[0]:+ ${FUNCNAME[0]}():}\[\e[m\]	'
 
 vagrant_up() {
   if [ ! -f ./token ]; then
@@ -51,28 +52,9 @@ helm_cleanup_repo_stable() {
 }
 
 main__install_istio() {
-  ## https://istio.io/latest/docs/setup/getting-started/
-  # Download
-  if [[ ! -d "${__dir}/istio-1.7.4" ]]
-  then
-    curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.7.4 TARGET_ARCH=x86_64 sh -
-  fi
-
-  local ISTIO_DIR=$(find $PWD -maxdepth 2 -type d -iname 'istio*')
-  if [[ "${ISTIO_DIR}" ]];
-  then
-    # ISTIO_DIR found
-    export PATH=$PATH:"${ISTIO_DIR}"/bin
-  else
-    echo "ISTIO_DIR not found... something went very wrong... aborting"
-    exit 1
-  fi
-  cd "${ISTIO_DIR}"
-  istioctl install --set profile=demo
-  kubectl label namespace default istio-injection=enabled
-
-  cd "${__dir}"
-    # ATP: istioctl can be used (is in PATH)
+  "${__dir}"/istio.install.sh
+  alias istioctl=$PWD/istioctl
+    # ATP: istioctl can be used (is in alias)
 }
 
 helm_install_my-docker-registry_using_PVClocalPath() {
@@ -95,6 +77,8 @@ helm_install_my-docker-registry_using_PVClocalPath() {
 
 
 main() {
+  
+
   shw_info "== Vagrant'ing machines up =="
   vagrant_up
   shw_info "== Setup k3s.yaml and KUBECONFIG =="
@@ -102,14 +86,19 @@ main() {
     # ATP:
     #  - We have the k3s cluster setup and up-and-running :)
     #  - kubectl/helm can be used against k3s cluster
-  shw_info "== Istio install =="
-  main__install_istio 
-    # ATP: istioctl can be used (is included in PATH)
 
   shw_info "== Helm: clean repo stable =="
   helm_cleanup_repo_stable
-  shw_info "== Helm: my-docker-registry =="
-  helm_install_my-docker-registry_using_PVClocalPath 
+  #shw_info "== Helm: my-docker-registry =="
+  #helm_install_my-docker-registry_using_PVClocalPath 
+
+  vagrant snapshot save pre.Istio && vagrant snapshot list
+  #vagrant snapshot restore pre.Istio
+
+  #shw_info "== Istio install =="
+  #main__install_istio 
+    # ATP: istioctl can be used (is included in PATH)
+
 
   kubectl get all,ingress -A
   shw_info "== Execution complete =="
