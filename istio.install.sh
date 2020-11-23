@@ -65,6 +65,9 @@ main() {
 
   shw_info "== execution complete =="
   cat <<EOT
+
+k apply -f <(istioctl kube-inject -f manifests/one-files/busybox.deployment.istio.yaml )
+
 istioctl dashboard kiali
 istioctl dashboard grafana
 istioctl dashboard prometheus
