@@ -59,7 +59,7 @@ uninstall_istio() {
 
 main() {
   cd "${__dir}"
-  vagrant snapshot restore pre.Istio
+  #vagrant snapshot restore pre.Istio
   install_istio 
     # ATP: istioctl can be used (is in alias) 
 
@@ -75,8 +75,20 @@ istioctl dashboard jaeger
 
 ## Great refs
 # IstioOperator: https://istio.io/latest/docs/reference/config/istio.operator.v1alpha1/#IstioOperatorSpec
-# OldIngress = Gateway + VirtualService: https://rinormaloku.com/istio-practice-routing-virtualservices/
-
+#
+# 1 nginx-controller + N Ingress + M Services = 1 Gateway + N VirtualService + M Services: https://rinormaloku.com/istio-practice-routing-virtualservices/
+#
+# Resume gw, virtualservice, destinationRule: https://medium.com/google-cloud/istio-routing-basics-14feab3c040e
+#   . ingressgateway  -  Gateway - VirtualService - (DestinationRule: subsets) - Services  -  Deployment    -    Pod
+#     lb: external-ip
+#                        tcp/80
+#                        hosts     hosts
+#                                  paths
+#                                                    subsets (host:mySvc;version:)                               app: myApp; version: v1/2                                       
+#    
+#    *virtualservices* glues *gateway* with *services*
+#    *destinationrule* defines *subsets* (from pod-label version:) which can be used by virtualServices
+#
 EOT
 
 }

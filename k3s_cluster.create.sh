@@ -15,6 +15,7 @@ set -o xtrace
 export PS4='\[\e[44m\]\[\e[1;30m\](${BASH_SOURCE}:${LINENO}):${FUNCNAME[0]:+ ${FUNCNAME[0]}():}\[\e[m\]	'
 
 vagrant_up() {
+  rm -vf ./token ./node-token
   if [ ! -f ./token ]; then
     head -c 64 </dev/urandom | xxd -o off -ps -c 64 > token
   fi
@@ -58,20 +59,7 @@ main__install_istio() {
 }
 
 helm_install_my-docker-registry_using_PVClocalPath() {
-  # Optional: my-docker-registry 
-  #  - via traefik-ingress, 
-  #  - with persistent-storage on k3s "local-path"
-  #helm \
-  #  upgrade --install --atomic \
-  #  my-docker-registry \
-  #  stable/docker-registry \
-  #  --values "${__dir}"/charts/docker-registry.values.yaml
-  helm repo add twuni https://helm.twun.io
-  helm \
-    upgrade --install --atomic \
-    my-docker-registry \
-    twuni/docker-registry --version 1.9.6 \
-    --values "${__dir}"/charts/docker-registry.values.yaml
+  "${__dir}/helm.my-docker-registry.install.sh"
 }
 
 
@@ -96,7 +84,7 @@ main() {
   #vagrant snapshot restore pre.Istio
 
   #shw_info "== Istio install =="
-  #main__install_istio 
+  main__install_istio 
     # ATP: istioctl can be used (is included in PATH)
 
 
